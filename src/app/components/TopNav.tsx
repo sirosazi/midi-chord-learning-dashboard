@@ -22,7 +22,7 @@ export function TopNav({ midiInputs, selectedMidiInput, onMidiInputChange }: Top
           <Music className="w-6 h-6 text-white" />
         </div>
         <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-          Chord Master Pro
+          Chord Master 
         </h1>
       </div>
 

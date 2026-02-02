@@ -1,15 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { TopNav } from "@/app/components/TopNav";
 import { ChordDisplay } from "@/app/components/ChordDisplay";
-import { MusicalStaff } from "@/app/components/MusicalStaff";
 import { PianoKeyboard } from "@/app/components/PianoKeyboard";
 import { MidiLoadTab } from "@/app/components/MidiLoadTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
-import {
-  detectChord,
-  midiNoteToStaffPosition,
-  midiNoteToNoteName,
-} from "@/app/utils/chord-detector";
+import { detectChord } from "@/app/utils/chord-detector";
 import { audioEngine } from "@/app/utils/audio-engine";
 import { keyboardToMidi } from "@/app/utils/keyboard-mapping";
 
@@ -171,12 +166,6 @@ function App() {
     });
   }, [pressedKeys]);
 
-  // 五線譜用のノート位置を計算
-  const staffNotes = Array.from(pressedKeys).map((note) => ({
-    pitch: midiNoteToNoteName(note),
-    position: midiNoteToStaffPosition(note),
-  }));
-
   // ピアノ鍵盤のクリックハンドラー
   const handleKeyClick = useCallback(
     (midiNote: number) => {
@@ -265,14 +254,11 @@ function App() {
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           <TabsContent value="free" className="m-0 flex-1 flex flex-col min-h-0 overflow-y-auto">
             <div className="flex flex-col">
-              <div className="px-8 py-10 bg-gradient-to-b from-[#121212] to-[#1a1a1a]">
+              <div className="px-8 py-6 bg-gradient-to-b from-[#121212] to-[#1a1a1a]">
                 <ChordDisplay
                   chordName={currentChord.name}
                   intervals={currentChord.intervals}
                 />
-                <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
-                  <MusicalStaff notes={staffNotes} />
-                </div>
               </div>
               <div className="px-8 pb-8 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] overflow-x-auto">
                 <PianoKeyboard
@@ -295,15 +281,12 @@ function App() {
                   setGuideKeys={setGuideKeys}
                 />
               </div>
-              <div className="flex-shrink-0 px-8 py-6 bg-gradient-to-b from-[#1a1a1a] to-[#121212]">
+              <div className="flex-shrink-0 px-8 py-4 bg-gradient-to-b from-[#1a1a1a] to-[#121212]">
                 <ChordDisplay
                   chordName={currentChord.name}
                   intervals={currentChord.intervals}
                   size="compact"
                 />
-                <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
-                  <MusicalStaff notes={staffNotes} compact />
-                </div>
               </div>
               <div className="flex-shrink-0 px-8 pb-8 bg-gradient-to-b from-[#121212] to-[#0a0a0a] overflow-x-auto">
                 <PianoKeyboard

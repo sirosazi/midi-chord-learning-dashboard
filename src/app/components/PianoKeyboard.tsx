@@ -70,7 +70,7 @@ export function PianoKeyboard({ pressedKeys = [], guideKeys = [], onKeyDown, onK
   const totalWidth = whiteKeys.length * 40; // 白鍵の総幅
 
   return (
-    <div className="relative bg-gradient-to-b from-gray-900 to-black p-8 rounded-t-2xl border-t border-x border-gray-700">
+    <div className="relative  p-8 rounded-t-2xl">
       <h3 className="text-sm text-gray-400 uppercase tracking-wider mb-4">Piano (C2 - C6)</h3>
       
       <div className="flex justify-center">

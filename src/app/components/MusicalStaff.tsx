@@ -56,7 +56,7 @@ export function MusicalStaff({ notes = [], compact = false }: MusicalStaffProps)
 
     notes.forEach((note, index) => {
       const x = 200 + index * 60;
-      const y = startY + lineSpacing * 4 - note.position * (lineSpacing　/ 2.0) ;
+      const y = startY + lineSpacing * 4 - note.position * (lineSpacing　/ ) + 5;
 
       ctx.beginPath(); 
       ctx.ellipse(x, y, noteRadiusX, noteRadiusY, -0.3, 0, Math.PI * 2);

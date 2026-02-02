@@ -32,7 +32,7 @@ export function ChordDisplay({ chordName, intervals, size = 'default' }: ChordDi
       >
         <h2
           className={`font-bold text-transparent bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-400 bg-clip-text drop-shadow-[0_0_30px_rgba(34,211,238,0.5)] ${
-            isCompact ? 'text-4xl' : 'text-7xl'
+            isCompact ? 'text-7xl' : 'text-7xl'
           }`}
         >
           {chordName}
