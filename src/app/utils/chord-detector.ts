@@ -139,10 +139,14 @@ function arraysEqual(a: number[], b: number[]): boolean {
 }
 
 // 音符の位置を五線譜上の位置に変換（Musical Staff用）
+// 五線譜では隣りの音名（C→D、シ→ド、ミ→ファなど）は半音・全音に関係なく1段ずつ動くため、
+// 音名（C,D,E,F,G,A,B）1つあたり position を 1 増やす
+const NATURAL_NOTE_STEPS: number[] = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]; // C C# D D# E F F# G G# A A# B (midiNote % 12)
 export function midiNoteToStaffPosition(midiNote: number): number {
-  // C4 (MIDI 60) を基準位置5とする
-  // 半音ごとに0.5ずつ増加
-  return ((midiNote - 60) * 0.5) + 5;
+  const octave = Math.floor(midiNote / 12);
+  const stepInOctave = NATURAL_NOTE_STEPS[midiNote % 12];
+  // C4 (MIDI 60) を基準位置5とする。1オクターブ = 7段（C〜B）
+  return 5 + (octave - 5) * 7 + stepInOctave;
 }
 
 // コード名から構成音（MIDIノート）を生成

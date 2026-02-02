@@ -119,19 +119,6 @@ export function MidiFileAnalyzer({ onProgressionLoaded }: MidiFileAnalyzerProps)
     runAnalysis(arrayBuffer, file.name);
   };
 
-  const handleLoadCodetest = async () => {
-    addLog("📂 codetest.mid（Studio One 和音再配置用サンプル）を読み込み中...");
-    try {
-      const res = await fetch("/codetest.mid");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const arrayBuffer = await res.arrayBuffer();
-      runAnalysis(arrayBuffer, "codetest.mid");
-    } catch (error) {
-      addLog(`❌ 読み込み失敗: ${error instanceof Error ? error.message : String(error)}`);
-      setIsAnalyzing(false);
-    }
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -196,17 +183,6 @@ export function MidiFileAnalyzer({ onProgressionLoaded }: MidiFileAnalyzerProps)
           className="hidden"
         />
       </label>
-      {/* codetest.mid で確認（Studio One 和音再配置用サンプル） */}
-      <button
-        type="button"
-        onClick={handleLoadCodetest}
-        disabled={isAnalyzing}
-        className="flex items-center justify-center gap-3 px-6 py-3 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 rounded-xl transition-all duration-200 border border-gray-600"
-      >
-        <Music className="w-4 h-4" />
-        <span className="font-medium">codetest.mid で確認</span>
-      </button>
-
       {/* 分析中表示 */}
       {isAnalyzing && (
         <div className="text-center py-8">
@@ -256,7 +232,7 @@ export function MidiFileAnalyzer({ onProgressionLoaded }: MidiFileAnalyzerProps)
       {chordProgression.length === 0 && !isAnalyzing && !fileName && (
         <div className="text-center py-12 text-gray-500">
           <p className="mb-2">MIDIファイルからコード進行を解析</p>
-          <p className="text-sm">ファイルを選択するか、「codetest.mid で確認」でサンプルを試せます</p>
+          <p className="text-sm">ファイルを選択してコード進行を解析できます</p>
         </div>
       )}
 

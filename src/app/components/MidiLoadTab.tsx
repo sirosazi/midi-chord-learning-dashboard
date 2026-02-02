@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Midi } from "@tonejs/midi";
-import { Upload, Music, Play, Square, Pause } from "lucide-react";
+import { Upload, Play, Square, Pause } from "lucide-react";
 import { chordNameToNotes } from "@/app/utils/chord-detector";
 import { audioEngine } from "@/app/utils/audio-engine";
 import { parseMidiToChordProgression, type ChordProgressionItem } from "@/app/components/MidiFileAnalyzer";
@@ -33,6 +33,7 @@ export function MidiLoadTab({ guideEnabled, setGuideEnabled, setGuideKeys }: Mid
   const [mp3Url, setMp3Url] = useState<string | null>(null);
   const [mp3FileName, setMp3FileName] = useState("");
   const [mp3Enabled, setMp3Enabled] = useState(true);
+  const [midiSoundEnabled, setMidiSoundEnabled] = useState(true);
   const startTimeRef = useRef<number>(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -69,27 +70,6 @@ export function MidiLoadTab({ guideEnabled, setGuideEnabled, setGuideKeys }: Mid
     } catch (err) {
       console.error(err);
       alert("MIDIの解析に失敗しました");
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  // codetest.mid
-  const handleLoadCodetest = async () => {
-    setIsAnalyzing(true);
-    try {
-      const res = await fetch("/codetest.mid");
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const arrayBuffer = await res.arrayBuffer();
-      const bpm = getBpmFromMidi(arrayBuffer);
-      setFileBpm(bpm);
-      setMidiBaseBpm(bpm ?? DEFAULT_BPM);
-      const progression = parseMidiToChordProgression(arrayBuffer, (msg) => console.log(msg));
-      setChordProgression(progression);
-      setFileName("codetest.mid");
-      setCurrentIndex(0);
-    } catch (err) {
-      console.error(err);
     } finally {
       setIsAnalyzing(false);
     }
@@ -216,16 +196,16 @@ export function MidiLoadTab({ guideEnabled, setGuideEnabled, setGuideKeys }: Mid
     };
   }, [isPlaying, isPaused, chordProgression, midiPlaybackRate]);
 
-  // インデックスが変わったらそのコードを再生
+  // インデックスが変わったらそのコードを再生（MIDI音ON時のみ）
   useEffect(() => {
-    if (!isPlaying || chordProgression.length === 0) return;
+    if (!isPlaying || chordProgression.length === 0 || !midiSoundEnabled) return;
     const item = chordProgression[currentIndex];
     if (!item) return;
     audioEngine.stopAll();
     const notes = chordNameToNotes(item.chord, 4);
     const durationMs = (item.duration / midiPlaybackRate) * 1000;
     audioEngine.playChord(notes, Math.min(durationMs, 2000), 90);
-  }, [currentIndex, isPlaying, chordProgression, midiPlaybackRate]);
+  }, [currentIndex, isPlaying, chordProgression, midiPlaybackRate, midiSoundEnabled]);
 
   // ガイド: 現在コードの鍵を親に通知（MIDIタブのみ・ガイドON時・鍵盤範囲内のみ）
   useEffect(() => {
@@ -290,15 +270,6 @@ export function MidiLoadTab({ guideEnabled, setGuideEnabled, setGuideKeys }: Mid
             <span>MIDIを開く</span>
             <input type="file" accept=".mid,.midi" onChange={handleMidiSelect} className="hidden" />
           </label>
-          <button
-            type="button"
-            onClick={handleLoadCodetest}
-            disabled={isAnalyzing}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg disabled:opacity-50"
-          >
-            <Music className="w-4 h-4" />
-            codetest.mid
-          </button>
           <label className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg cursor-pointer">
             <Upload className="w-4 h-4" />
             <span>MP3を開く</span>
@@ -387,6 +358,17 @@ export function MidiLoadTab({ guideEnabled, setGuideEnabled, setGuideKeys }: Mid
             />
             <Label htmlFor="guide-enabled" className="text-sm text-gray-400 cursor-pointer">
               ガイド
+            </Label>
+          </div>
+          {/* MIDI音（コード進行再生時の音ON/OFF） */}
+          <div className="flex items-center gap-2">
+            <Switch
+              id="midi-sound-enabled"
+              checked={midiSoundEnabled}
+              onCheckedChange={setMidiSoundEnabled}
+            />
+            <Label htmlFor="midi-sound-enabled" className="text-sm text-gray-400 cursor-pointer">
+              MIDI音
             </Label>
           </div>
         </div>
@@ -478,7 +460,7 @@ export function MidiLoadTab({ guideEnabled, setGuideEnabled, setGuideKeys }: Mid
 
       {chordProgression.length === 0 && !isAnalyzing && (
         <div className="text-center py-12 text-gray-500">
-          <p>MIDIファイルを開くか「codetest.mid」でコード進行を読み込んでください</p>
+          <p>MIDIファイルを開いてコード進行を読み込んでください</p>
         </div>
       )}
     </div>

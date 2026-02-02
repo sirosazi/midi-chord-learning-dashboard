@@ -14,13 +14,13 @@ interface MusicalStaffProps {
 export function MusicalStaff({ notes = [], compact = false }: MusicalStaffProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const height = compact ? 160 : 200;
-  const lineSpacing = compact ? 16 : 20;
+  const height = compact ? 120 : 200;
+  const lineSpacing = compact ? 12 : 20;
   const clefFontSize = compact ? 80 : 100;
   const noteRadiusX = compact ? 6 : 8;
   const noteRadiusY = compact ? 5 : 6;
   const stemHeight = compact ? 28 : 35;
-  const stemOffset = compact ? 5 : 7;
+  const stemOffset = compact ? 4 : 7;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -56,9 +56,9 @@ export function MusicalStaff({ notes = [], compact = false }: MusicalStaffProps)
 
     notes.forEach((note, index) => {
       const x = 200 + index * 60;
-      const y = startY + lineSpacing * 4 - note.position * (lineSpacing / 2);
+      const y = startY + lineSpacing * 4 - note.position * (lineSpacing　/ 2.0) ;
 
-      ctx.beginPath();
+      ctx.beginPath(); 
       ctx.ellipse(x, y, noteRadiusX, noteRadiusY, -0.3, 0, Math.PI * 2);
       ctx.fill();
 

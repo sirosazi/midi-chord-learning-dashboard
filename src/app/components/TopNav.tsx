@@ -66,11 +66,6 @@ export function TopNav({ midiInputs, selectedMidiInput, onMidiInputChange }: Top
           </div>
         )}
 
-        {/* BPM Display */}
-        <div className="flex items-center gap-3 bg-gray-900 px-6 py-2.5 rounded-lg border border-gray-700">
-          <span className="text-sm text-gray-400 uppercase tracking-wide">BPM</span>
-          <span className="text-2xl font-mono font-bold text-cyan-400">120</span>
-        </div>
       </div>
     </nav>
   );
